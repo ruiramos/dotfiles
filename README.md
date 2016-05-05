@@ -2,7 +2,7 @@
 
 ## vim
 
-i) Install (https://github.com/junegunn/vim-plug)[vim-plug]
+i) Install [vim-plug](https://github.com/junegunn/vim-plug)
 
 
 ```sh
@@ -14,7 +14,7 @@ ii) Run `:PlugInstall`
 
 ## tmux
 
-i) Install (https://github.com/tmux-plugins/tpm)[tpm]
+i) Install [tpm](https://github.com/tmux-plugins/tpm)
 
 ```sh
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
