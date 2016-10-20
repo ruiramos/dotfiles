@@ -2,17 +2,21 @@
 
 ## vim
 
-* Install vim plug
+i) Install [vim-plug](https://github.com/junegunn/vim-plug)
 
-`
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-`
 
-* Run `:PlugInstall`
+```sh
+  curl -fLo ~/.vim/autoload/plug.vim --create-dirs \ 
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+```
+
+ii) Run `:PlugInstall`
 
 ## tmux
 
-* Install tpm
+i) Install [tpm](https://github.com/tmux-plugins/tpm)
 
-`git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm`
+```sh
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
 
