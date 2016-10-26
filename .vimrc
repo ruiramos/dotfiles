@@ -1,11 +1,17 @@
 set tabstop=2 softtabstop=1 expandtab shiftwidth=2 smarttab
 syntax on
 
+:set smartcase
+:set ignorecase
+
 " hides buffers instead of closing them
 :set hidden
 
+" autoreads files editted outside vim
+:set autoread
+
 " NERDTree opens with Ctrl m
-map <C-m> :NERDTreeToggle<CR>
+map <silent> <C-k>b :NERDTreeToggle<CR>
 
 " removes trailing whitespace
 autocmd BufWritePre * %s/\s\+$//e
@@ -15,7 +21,6 @@ noremap <Up> <NOP>
 noremap <Down> <NOP>
 noremap <Left> <NOP>
 noremap <Right> <NOP>
-
 
 nnoremap <leader>el :ElmEvalLine<CR>
 vnoremap <leader>es :<C-u>ElmEvalSelection<CR>
@@ -38,6 +43,10 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " bind \ (backward slash) to grep shortcut
 command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+nnoremap \ :Ag<SPACE>
+
+" ctrlp - set mru as default
+let g:ctrlp_cmd = 'CtrlPMRU'
 
 execute pathogen#infect()
 
@@ -119,10 +128,5 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_loc_list_height = 5
-
-" ctrl p
-" let g:ctrlp_max_files=0
-" let g:ctrlp_max_depth=40
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . --cached --exclude-standard']
 
 set number
