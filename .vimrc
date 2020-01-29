@@ -1,21 +1,45 @@
 set tabstop=2 softtabstop=1 expandtab shiftwidth=2 smarttab
 syntax on
 
-:set smartcase
-:set ignorecase
+set smartcase
+set ignorecase
+
+set termguicolors
 
 " hides buffers instead of closing them
-:set hidden
+set hidden
 
 " autoreads files editted outside vim
-:set autoread
+set autoread
+
+" disables swapfiles
+set noswapfile
+
+" shows whitespace chars
+set list 
+
+" use macports python
+let g:python_host_prog='/opt/local/bin/python'
+let g:python3_host_prog='/opt/local/bin/python'
+
+set noshowmode
+
+set mouse=a
+
+" shift happens
+cnoreabbrev W w
 
 " NERDTree opens with Ctrl m
 map <silent> <C-k>b :NERDTreeToggle<CR>
 map <silent> <C-k>f :NERDTreeFind<CR>
 
+" disables comment auto insertion
+autocmd FileType * setlocal formatoptions-=cro
+
 " removes trailing whitespace
-autocmd BufWritePre * %s/\s\+$//e
+" autocmd BufWritePre * %s/\s\+$//e
+
+au BufRead,BufNewFile *.handlebars set filetype=html
 
 " :((((
 noremap <Up> <NOP>
@@ -23,11 +47,15 @@ noremap <Down> <NOP>
 noremap <Left> <NOP>
 noremap <Right> <NOP>
 
-let mapleader=" "
+let mapleader=","
 
 nnoremap <leader>el :ElmEvalLine<CR>
 vnoremap <leader>es :<C-u>ElmEvalSelection<CR>
 nnoremap <leader>em :ElmMakeCurrentFile<CR>
+
+" open todos file
+nnoremap <leader>ed :vsp ~/.scratch/todo.md<CR>
+nnoremap <leader>es :vsp ~/.scratch/sprint.md<CR>
 
 " uses ag for ctrlp and grep
 if executable('ag')
@@ -45,12 +73,27 @@ endif
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " bind \ (backward slash) to grep shortcut
-command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+command -nargs=+ -complete=file -bar Ag grep! <args>|cwindow|redraw!
 nnoremap \ :Ag<SPACE>
 
 " ctrlp - set mru as default
 let g:ctrlp_cmd = 'CtrlPMRU'
 let g:ctrlp_mruf_relative = 1
+let g:ctrlp_prompt_mappings = {
+    \ 'AcceptSelection("h")': ['<c-i>', '<2-LeftMouse>'],
+    \ 'AcceptSelection("v")': ['<c-s>', '<RightMouse>'],
+    \ }
+
+let g:ale_fixers = {
+  \ 'javascript': ['prettier', 'eslint'], 
+  \ 'typescript': ['prettier', 'eslint'],
+  \ 'rust': ['rustfmt'],
+  \ 'reason': ['refmt'],
+  \ 'python': ['black']
+  \ }
+let g:ale_fix_on_save = 1
+let g:ale_python_auto_pipenv = 1
+highlight clear ALEWarningSign
 
 execute pathogen#infect()
 
@@ -71,18 +114,21 @@ Plug 'airblade/vim-gitgutter'
 " javascript
 Plug 'pangloss/vim-javascript'
 Plug 'elzr/vim-json'
+Plug 'mxw/vim-jsx'
 
 " less
 Plug 'groenewege/vim-less'
+Plug 'leafgarland/typescript-vim'
 
 " linting
-Plug 'scrooloose/syntastic'
+"Plug 'scrooloose/syntastic'
+Plug 'w0rp/ale'
 
 " andar pros lados
 Plug 'christoomey/vim-tmux-navigator'
 
 " code completion
-Plug 'Valloric/YouCompleteMe'
+" Plug 'Valloric/YouCompleteMe'
 
 " emmet
 Plug 'mattn/emmet-vim'
@@ -123,67 +169,127 @@ Plug 'terryma/vim-expand-region'
 
 Plug 'heavenshell/vim-jsdoc'
 
-" typescript
-Plug 'Quramy/tsuquyomi'
-Plug 'leafgarland/typescript-vim'
-
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 
 " elm
 Plug 'ElmCast/elm-vim'
 
+" reason
+Plug 'reasonml-editor/vim-reason-plus'
+
 " tag bar
 " Plug 'majutsushi/tagbar'
+
+" solidity
+Plug 'tomlion/vim-solidity'
+
+" lsp, autocomplete
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+Plug '~/.fzf'
+Plug 'junegunn/fzf.vim'
+
+"Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+"Plug 'davidhalter/jedi-vim'
+"Plug 'zchee/deoplete-jedi'
+
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+
+" auto detect ident settings
+Plug 'tpope/vim-sleuth'
+
+Plug 'rust-lang/rust.vim'
 
 call plug#end()
 
 let g:seoul256_background = 234
 colo seoul256
 
+" Redefine :Ag command
+let g:fzf_layout = { 'down': '~40%' }
+" command! -nargs=* Ag
+      "\ call fzf#vim#ag(<q-args>, '--color-match "30;43" --color-path "38;5;36"', fzf_layout)
+nnoremap <leader>bf :Buffers<CR>
+
 " fancy font
 let g:airline_powerline_fonts = 1
 
-" sets eslint for linting of js files
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_javascript_eslint_exec = 'eslint_d'
+" edit / source vimrc
 
-let g:syntastic_elixir_checkers = ['elixir']
-let g:syntastic_enable_elixir_checker = 1
+nnoremap gev :e $MYVIMRC<CR>
+nnoremap gsv :so $MYVIMRC<CR>
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#file#enable_buffer_path = 1
+"let g:deoplete#sources#jedi#show_docstring=1
 
-" syntastic stuff
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
+" This to close preview when insert mode leaves
+"autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+set statusline+=%#warningmsg#
+set statusline+=%*
+
+set conceallevel=1
 
 " completion
 filetype plugin on
-set omnifunc=syntaxcomplete#Complete
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_loc_list_height = 5
 
 set number
-
-" reason stuff
-if executable('ocamlmerlin')
-  " To set the log file and restart:
-  let s:ocamlmerlin=substitute(system('which ocamlmerlin'),'ocamlmerlin\n$','','') . "../share/merlin/vim/"
-  execute "set rtp+=".s:ocamlmerlin
-  let g:syntastic_ocaml_checkers=['merlin']
-endif
-if executable('refmt')
-  let s:reason=substitute(system('which refmt'),'refmt\n$','','') . "../share/reason/editorSupport/VimReason"
-  execute "set rtp+=".s:reason
-  let g:syntastic_reason_checkers=['merlin']
-endif
+hi cursorline ctermbg=none
+hi cursorlinenr ctermfg=red
 
 " editor config
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 
-" youcompleteme - closing preview window
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
+" Get running OS
+let os = ""
+if has("win32")
+  let os="win"
+else
+  if has("unix")
+    let s:uname = system("uname")
+    if s:uname == "Darwin\n"
+      let os="mac"
+    else
+      let os="unix"
+    endif
+  endif
+endif
 
+" uses the system clipboard
+set clipboard=unnamed
+if os == 'unix'
+    set clipboard=unnamedplus
+endif
+
+" Required for operations modifying multiple buffers like rename.
+" set hidden
+
+let g:LanguageClient_serverCommands = {
+  \ 'javascript': ['javascript-typescript-stdio'],
+  \ 'typescript': ['javascript-typescript-stdio'],
+  \ 'javascript.jsx': ['javascript-typescript-stdio'],
+  \ 'python': ['pyls', '-v'],
+  \ 'reason': ['/usr/local/bin/reason-language-server.exe'],
+  \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+  \ }
+
+let g:LanguageClient_loggingLevel = 'INFO'
+let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
+let g:LanguageClient_serverStderr = '/tmp/LanguageServer.log'
+let g:LanguageClient_diagnosticsEnable = 0
+
+" run rust fmt on save
+let g:rustfmt_autosave = 0
+
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> <leader>h :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+
+nmap =j :%!python -m json.tool<CR>
