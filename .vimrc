@@ -18,10 +18,6 @@ set noswapfile
 " shows whitespace chars
 set list 
 
-" use macports python
-let g:python_host_prog='/opt/local/bin/python'
-let g:python3_host_prog='/opt/local/bin/python'
-
 set noshowmode
 
 set mouse=a
@@ -73,7 +69,7 @@ endif
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " bind \ (backward slash) to grep shortcut
-command -nargs=+ -complete=file -bar Ag grep! <args>|cwindow|redraw!
+command! -nargs=+ -complete=file -bar Ag grep! <args>|cwindow|redraw!
 nnoremap \ :Ag<SPACE>
 
 " ctrlp - set mru as default
@@ -95,7 +91,13 @@ let g:ale_fix_on_save = 1
 let g:ale_python_auto_pipenv = 1
 highlight clear ALEWarningSign
 
-execute pathogen#infect()
+"execute pathogen#infect()
+
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
 call plug#begin('~/.vim/plugged')
 
@@ -114,11 +116,13 @@ Plug 'airblade/vim-gitgutter'
 " javascript
 Plug 'pangloss/vim-javascript'
 Plug 'elzr/vim-json'
-Plug 'mxw/vim-jsx'
+Plug 'maxmellon/vim-jsx-pretty'
+
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
 
 " less
 Plug 'groenewege/vim-less'
-Plug 'leafgarland/typescript-vim'
 
 " linting
 "Plug 'scrooloose/syntastic'
@@ -126,7 +130,6 @@ Plug 'w0rp/ale'
 
 " andar pros lados
 Plug 'christoomey/vim-tmux-navigator'
-
 " code completion
 " Plug 'Valloric/YouCompleteMe'
 
@@ -140,7 +143,7 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'digitaltoad/vim-pug'
 
 " jump between requires
-Plug 'moll/vim-node'
+"Plug 'moll/vim-node'
 
 " surround stuff in other stuff
 Plug 'tpope/vim-surround'
@@ -167,8 +170,6 @@ Plug 'editorconfig/editorconfig-vim'
 " expand selection
 Plug 'terryma/vim-expand-region'
 
-Plug 'heavenshell/vim-jsdoc'
-
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 
 " elm
@@ -191,7 +192,7 @@ Plug 'autozimu/LanguageClient-neovim', {
 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
-Plug '~/.fzf'
+Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 
 "Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
@@ -293,3 +294,12 @@ nnoremap <silent> <leader>h :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 
 nmap =j :%!python -m json.tool<CR>
+
+hi def link tsxTag Function
+hi def link tsxComponentName Function
+hi def link tsxTagName Identifier
+hi def link tsxCloseString Identifier
+hi def link tsxCloseTag Identifier
+hi def link tsxCloseTagName Identifier
+hi def link tsxAttrib Type
+hi def link typescriptEndColons Noise
