@@ -53,24 +53,21 @@ nnoremap <leader>em :ElmMakeCurrentFile<CR>
 nnoremap <leader>ed :vsp ~/.scratch/todo.md<CR>
 nnoremap <leader>es :vsp ~/.scratch/sprint.md<CR>
 
-" uses ag for ctrlp and grep
-if executable('ag')
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
+if executable('rg')
+  let g:ctrlp_user_command = 'rg --files %s'
   let g:ctrlp_use_caching = 0
+  let g:ctrlp_working_path_mode = 'ra'
+  let g:ctrlp_switch_buffer = 'et'
+  let g:ackprg = "rg\ --vimgrep\ --no-heading\ --smart-case"
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+  set grepformat+=%f:%l:%c:%m
 endif
 
 " bind K to grep word under cursor
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " bind \ (backward slash) to grep shortcut
-command! -nargs=+ -complete=file -bar Ag grep! <args>|cwindow|redraw!
-nnoremap \ :Ag<SPACE>
+nnoremap \ :Ack<SPACE>
 
 " ctrlp - set mru as default
 let g:ctrlp_cmd = 'CtrlPMRU'
@@ -90,8 +87,6 @@ let g:ale_fixers = {
 let g:ale_fix_on_save = 1
 let g:ale_python_auto_pipenv = 1
 highlight clear ALEWarningSign
-
-"execute pathogen#infect()
 
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -125,25 +120,13 @@ Plug 'peitalin/vim-jsx-typescript'
 Plug 'groenewege/vim-less'
 
 " linting
-"Plug 'scrooloose/syntastic'
 Plug 'w0rp/ale'
 
 " andar pros lados
 Plug 'christoomey/vim-tmux-navigator'
-" code completion
-" Plug 'Valloric/YouCompleteMe'
 
 " emmet
 Plug 'mattn/emmet-vim'
-
-" multiple cursors!
-Plug 'terryma/vim-multiple-cursors'
-
-" vim pug/jade
-Plug 'digitaltoad/vim-pug'
-
-" jump between requires
-"Plug 'moll/vim-node'
 
 " surround stuff in other stuff
 Plug 'tpope/vim-surround'
@@ -161,9 +144,6 @@ Plug 'vim-airline/vim-airline'
 " elixir
 Plug 'elixir-lang/vim-elixir'
 
-" managing buffers
-Plug 'qpkorr/vim-bufkill'
-
 " editor config
 Plug 'editorconfig/editorconfig-vim'
 
@@ -178,9 +158,6 @@ Plug 'ElmCast/elm-vim'
 " reason
 Plug 'reasonml-editor/vim-reason-plus'
 
-" tag bar
-" Plug 'majutsushi/tagbar'
-
 " solidity
 Plug 'tomlion/vim-solidity'
 
@@ -192,51 +169,33 @@ Plug 'autozimu/LanguageClient-neovim', {
 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
-
-"Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-"Plug 'davidhalter/jedi-vim'
-"Plug 'zchee/deoplete-jedi'
-
 Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
 
 " auto detect ident settings
 Plug 'tpope/vim-sleuth'
 
 Plug 'rust-lang/rust.vim'
 
+Plug 'haya14busa/vim-asterisk'
+
+Plug 'mileszs/ack.vim'
+
 call plug#end()
 
 let g:seoul256_background = 234
 colo seoul256
 
-" Redefine :Ag command
-let g:fzf_layout = { 'down': '~40%' }
-" command! -nargs=* Ag
-      "\ call fzf#vim#ag(<q-args>, '--color-match "30;43" --color-path "38;5;36"', fzf_layout)
-nnoremap <leader>bf :Buffers<CR>
-
 " fancy font
 let g:airline_powerline_fonts = 1
 
 " edit / source vimrc
-
 nnoremap gev :e $MYVIMRC<CR>
 nnoremap gsv :so $MYVIMRC<CR>
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#file#enable_buffer_path = 1
-"let g:deoplete#sources#jedi#show_docstring=1
 
-" This to close preview when insert mode leaves
-"autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+let g:deoplete#enable_at_startup = 1
 
 set statusline+=%#warningmsg#
 set statusline+=%*
-
-set conceallevel=1
 
 " completion
 filetype plugin on
@@ -269,9 +228,6 @@ if os == 'unix'
     set clipboard=unnamedplus
 endif
 
-" Required for operations modifying multiple buffers like rename.
-" set hidden
-
 let g:LanguageClient_serverCommands = {
   \ 'javascript': ['javascript-typescript-stdio'],
   \ 'typescript': ['javascript-typescript-stdio'],
@@ -295,6 +251,7 @@ nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 
 nmap =j :%!python -m json.tool<CR>
 
+" no idea what this is about anymore
 hi def link tsxTag Function
 hi def link tsxComponentName Function
 hi def link tsxTagName Identifier
@@ -303,3 +260,14 @@ hi def link tsxCloseTag Identifier
 hi def link tsxCloseTagName Identifier
 hi def link tsxAttrib Type
 hi def link typescriptEndColons Noise
+
+" vim-asterisk
+map *   <Plug>(asterisk-*)
+map #   <Plug>(asterisk-#)
+map g*  <Plug>(asterisk-g*)
+map g#  <Plug>(asterisk-g#)
+map z*  <Plug>(asterisk-z*)
+map gz* <Plug>(asterisk-gz*)
+map z#  <Plug>(asterisk-z#)
+map gz# <Plug>(asterisk-gz#)
+

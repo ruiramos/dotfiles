@@ -1,8 +1,12 @@
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/ruiramos/.oh-my-zsh
+export ZSH=/Users/rui.ramos/.oh-my-zsh
 
 export NODE_PATH="/usr/local/lib/node_modules"
 export EDITOR=vi
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+
+# Alias for intel x86_64 brew
+alias axbrew='arch -x86_64 /usr/local/homebrew/bin/brew'
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -55,10 +59,10 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(vi-mode history-substring-search git z osx tmux sudo docker docker-compose kubectl)
+plugins=(vi-mode history-substring-search git z macos tmux sudo docker docker-compose kubectl)
 
 # User configuration
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+#export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin":$PATH
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -86,11 +90,11 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-#alias vi="vim"
+alias vi="nvim"
+alias vim="nvim"
 alias k="kubectl"
 alias wk="watch kubectl"
+alias vlogin='vault login -method=github token="$GITHUB_TOKEN"'
 
 bindkey -v
 bindkey '^R' history-incremental-pattern-search-backward
