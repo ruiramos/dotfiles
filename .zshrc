@@ -1,9 +1,13 @@
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/ruiramos/.oh-my-zsh
+export ZSH=/Users/rui.ramos/.oh-my-zsh
 
 export NVM_LAZY_LOAD=true
 export NODE_PATH="/usr/local/lib/node_modules"
 export EDITOR=vi
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+
+# Alias for intel x86_64 brew
+alias axbrew='arch -x86_64 /usr/local/homebrew/bin/brew'
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -59,6 +63,7 @@ ZSH_THEME="robbyrussell"
 plugins=(vi-mode git z macos tmux sudo docker docker-compose kubectl asdf zsh-nvm)
 
 # User configuration
+#export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin":$PATH
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.wasme/bin:$HOME/.cargo/bin"
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -91,8 +96,10 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias vi="nvim"
+alias vim="nvim"
 alias k="kubectl"
 alias wk="watch kubectl"
+alias vlogin='vault login -method=github token="$GITHUB_TOKEN"'
 
 bindkey -v
 bindkey '^R' history-incremental-pattern-search-backward

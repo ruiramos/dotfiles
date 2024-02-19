@@ -23,10 +23,6 @@ set noshowmode
 set mouse=a
 
 set suffixesadd=js,jsx,ts,tsx
-
-set wildignore+=*valloop/functions/*.js
-let g:NERDTreeRespectWildIgnore=1
-
 " shift happens
 cnoreabbrev W w
 
@@ -60,24 +56,21 @@ nnoremap <leader>em :ElmMakeCurrentFile<CR>
 nnoremap <leader>ed :vsp ~/.scratch/todo.md<CR>
 nnoremap <leader>es :vsp ~/.scratch/sprint.md<CR>
 
-" uses ag for ctrlp and grep
-if executable('ag')
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching=0
+if executable('rg')
+  let g:ctrlp_user_command = 'rg --files %s'
+  let g:ctrlp_use_caching = 0
+  let g:ctrlp_working_path_mode = 'ra'
+  let g:ctrlp_switch_buffer = 'et'
+  let g:ackprg = "rg\ --vimgrep\ --no-heading\ --smart-case"
+  set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
+  set grepformat+=%f:%l:%c:%m
 endif
 
 " bind K to grep word under cursor
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " bind \ (backward slash) to grep shortcut
-"command! -nargs=+ -complete=file -bar Ag grep! <args>|cwindow|redraw!
-nnoremap \ :Ag<SPACE>
+nnoremap \ :Ack<SPACE>
 
 " ctrlp - set mru as default
 let g:ctrlp_cmd = 'CtrlPMRU'
@@ -103,8 +96,6 @@ let g:ale_fix_on_save = 1
 let g:ale_python_auto_pipenv = 1
 let g:ale_completion_enabled = 0
 highlight clear ALEWarningSign
-
-"execute pathogen#infect()
 
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -138,7 +129,6 @@ Plug 'maxmellon/vim-jsx-pretty'
 Plug 'groenewege/vim-less'
 
 " linting
-"Plug 'scrooloose/syntastic'
 Plug 'w0rp/ale'
 
 " andar pros lados
@@ -146,12 +136,6 @@ Plug 'christoomey/vim-tmux-navigator'
 
 " emmet
 Plug 'mattn/emmet-vim'
-
-" multiple cursors!
-Plug 'terryma/vim-multiple-cursors'
-
-" vim pug/jade
-Plug 'digitaltoad/vim-pug'
 
 " surround stuff in other stuff
 Plug 'tpope/vim-surround'
@@ -168,9 +152,6 @@ Plug 'vim-airline/vim-airline'
 
 " elixir
 Plug 'elixir-lang/vim-elixir'
-
-" managing buffers
-Plug 'qpkorr/vim-bufkill'
 
 " editor config
 Plug 'editorconfig/editorconfig-vim'
@@ -191,9 +172,6 @@ Plug 'tomlion/vim-solidity'
 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
-Plug 'junegunn/fzf'
-Plug 'junegunn/fzf.vim'
-
 Plug 'godlygeek/tabular'
 
 " auto detect ident settings
@@ -201,11 +179,11 @@ Plug 'tpope/vim-sleuth'
 
 Plug 'rust-lang/rust.vim'
 
-Plug 'hashivim/vim-terraform'
-
-Plug 'evanleck/vim-svelte', {'branch': 'main'}
-
 Plug 'elzr/vim-json'
+
+Plug 'haya14busa/vim-asterisk'
+
+Plug 'mileszs/ack.vim'
 
 call plug#end()
 
@@ -213,30 +191,17 @@ let g:seoul256_background = 234
 let g:seoul256_light_background = 256
 colo seoul256
 
-" Redefine :Ag command
-let g:fzf_layout = { 'down': '~40%' }
-" command! -nargs=* Ag
-      "\ call fzf#vim#ag(<q-args>, '--color-match "30;43" --color-path "38;5;36"', fzf_layout)
-nnoremap <leader>bf :Buffers<CR>
-
 " fancy font
 let g:airline_powerline_fonts = 1
 
 " edit / source vimrc
-
 nnoremap gev :e $MYVIMRC<CR>
 nnoremap gsv :so $MYVIMRC<CR>
-let g:deoplete#enable_at_startup = 1
-"let g:deoplete#sources#jedi#show_docstring=1
 
-" This to close preview when insert mode leaves
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | silent! pclose | endif
-let g:gitgutter_preview_win_floating=0
+let g:deoplete#enable_at_startup = 1
 
 set statusline+=%#warningmsg#
 set statusline+=%*
-
-set conceallevel=1
 
 " completion
 filetype plugin on
@@ -269,8 +234,6 @@ if os == 'unix'
     set clipboard=unnamedplus
 endif
 
-" Required for operations modifying multiple buffers like rename.
-" set hidden
 
 " run rust fmt on save
 let g:rustfmt_autosave = 1
@@ -279,3 +242,14 @@ nnoremap <silent> gd :ALEGoToDefinition<CR>
 nnoremap <silent> <leader>h :ALEHover<CR>
 
 nmap =j :%!python -m json.tool<CR>
+
+" vim-asterisk
+map *   <Plug>(asterisk-*)
+map #   <Plug>(asterisk-#)
+map g*  <Plug>(asterisk-g*)
+map g#  <Plug>(asterisk-g#)
+map z*  <Plug>(asterisk-z*)
+map gz* <Plug>(asterisk-gz*)
+map z#  <Plug>(asterisk-z#)
+map gz# <Plug>(asterisk-gz#)
+
