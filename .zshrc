@@ -1,6 +1,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/ruiramos/.oh-my-zsh
 
+export NVM_LAZY_LOAD=true
 export NODE_PATH="/usr/local/lib/node_modules"
 export EDITOR=vi
 
@@ -55,13 +56,14 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(vi-mode history-substring-search git z osx tmux sudo docker docker-compose kubectl)
+plugins=(vi-mode git z macos tmux sudo docker docker-compose kubectl asdf zsh-nvm)
 
 # User configuration
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.wasme/bin:$HOME/.cargo/bin"
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
+source ~/.zprofile
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
@@ -88,7 +90,7 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-#alias vi="vim"
+alias vi="nvim"
 alias k="kubectl"
 alias wk="watch kubectl"
 
@@ -97,13 +99,6 @@ bindkey '^R' history-incremental-pattern-search-backward
 bindkey -M vicmd 'v' visual-mode
 
 bindkey '^X^E' edit-command-line
-
-# bind UP and DOWN arrow keys
-zmodload zsh/terminfo
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
-bindkey "$terminfo[cuu1]" history-substring-search-up
-bindkey "$terminfo[cud1]" history-substring-search-down
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -119,10 +114,33 @@ function gopen(){
 #export VK_LAYER_PATH=$VULKAN_SDK/etc/vulkan/explicit_layer.d
 #export SHADERC_LIB_DIR="$VULKAN_SDK/lib"
 
-#source ~/.zprofile
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# tabtab source for packages
+# uninstall by removing these lines
+[[ -f ~/.config/tabtab/__tabtab.zsh ]] && . ~/.config/tabtab/__tabtab.zsh || true
 
-source ~/.zprofile
+# Wasmer
+export WASMER_DIR="/Users/ruiramos/.wasmer"
+[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
+
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+
+#export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"
+#eval "$(rbenv init -)"
+
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# Created by `pipx` on 2023-02-28 22:28:34
+export PATH="$PATH:/Users/ruiramos/.local/bin"
+
+export WASMTIME_HOME="$HOME/.wasmtime"
+export PATH="$WASMTIME_HOME/bin:$PATH"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/ruiramos/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ruiramos/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/ruiramos/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ruiramos/Downloads/google-cloud-sdk/completion.zsh.inc'; fi

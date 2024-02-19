@@ -22,6 +22,11 @@ set noshowmode
 
 set mouse=a
 
+set suffixesadd=js,jsx,ts,tsx
+
+set wildignore+=*valloop/functions/*.js
+let g:NERDTreeRespectWildIgnore=1
+
 " shift happens
 cnoreabbrev W w
 
@@ -36,6 +41,8 @@ autocmd FileType * setlocal formatoptions-=cro
 " autocmd BufWritePre * %s/\s\+$//e
 
 au BufRead,BufNewFile *.handlebars set filetype=html
+
+let g:python3_host_prog = '/Users/ruiramos/.nvim-venv/bin/python'
 
 " :((((
 noremap <Up> <NOP>
@@ -62,14 +69,14 @@ if executable('ag')
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 
   " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
+  let g:ctrlp_use_caching=0
 endif
 
 " bind K to grep word under cursor
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " bind \ (backward slash) to grep shortcut
-command! -nargs=+ -complete=file -bar Ag grep! <args>|cwindow|redraw!
+"command! -nargs=+ -complete=file -bar Ag grep! <args>|cwindow|redraw!
 nnoremap \ :Ag<SPACE>
 
 " ctrlp - set mru as default
@@ -83,12 +90,18 @@ let g:ctrlp_prompt_mappings = {
 let g:ale_fixers = {
   \ 'javascript': ['prettier', 'eslint'], 
   \ 'typescript': ['prettier', 'eslint'],
+  \ 'typescriptreact': ['prettier', 'eslint'],
+  \ 'javascriptreact': ['prettier', 'eslint'],
   \ 'rust': ['rustfmt'],
   \ 'reason': ['refmt'],
   \ 'python': ['black']
   \ }
+
+let g:ale_linters = {'rust': ['analyzer'], 'python': ['flake8', 'pylsp', 'bandit', 'mypy']}
+
 let g:ale_fix_on_save = 1
 let g:ale_python_auto_pipenv = 1
+let g:ale_completion_enabled = 0
 highlight clear ALEWarningSign
 
 "execute pathogen#infect()
@@ -116,10 +129,10 @@ Plug 'airblade/vim-gitgutter'
 " javascript
 Plug 'pangloss/vim-javascript'
 Plug 'elzr/vim-json'
+"Plug 'leafgarland/typescript-vim'
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'maxmellon/vim-jsx-pretty'
 
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
 
 " less
 Plug 'groenewege/vim-less'
@@ -130,8 +143,6 @@ Plug 'w0rp/ale'
 
 " andar pros lados
 Plug 'christoomey/vim-tmux-navigator'
-" code completion
-" Plug 'Valloric/YouCompleteMe'
 
 " emmet
 Plug 'mattn/emmet-vim'
@@ -141,9 +152,6 @@ Plug 'terryma/vim-multiple-cursors'
 
 " vim pug/jade
 Plug 'digitaltoad/vim-pug'
-
-" jump between requires
-"Plug 'moll/vim-node'
 
 " surround stuff in other stuff
 Plug 'tpope/vim-surround'
@@ -178,38 +186,31 @@ Plug 'ElmCast/elm-vim'
 " reason
 Plug 'reasonml-editor/vim-reason-plus'
 
-" tag bar
-" Plug 'majutsushi/tagbar'
-
 " solidity
 Plug 'tomlion/vim-solidity'
-
-" lsp, autocomplete
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
 
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 
-"Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-"Plug 'davidhalter/jedi-vim'
-"Plug 'zchee/deoplete-jedi'
-
 Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
 
 " auto detect ident settings
 Plug 'tpope/vim-sleuth'
 
 Plug 'rust-lang/rust.vim'
 
+Plug 'hashivim/vim-terraform'
+
+Plug 'evanleck/vim-svelte', {'branch': 'main'}
+
+Plug 'elzr/vim-json'
+
 call plug#end()
 
 let g:seoul256_background = 234
+let g:seoul256_light_background = 256
 colo seoul256
 
 " Redefine :Ag command
@@ -226,12 +227,11 @@ let g:airline_powerline_fonts = 1
 nnoremap gev :e $MYVIMRC<CR>
 nnoremap gsv :so $MYVIMRC<CR>
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#file#enable_buffer_path = 1
 "let g:deoplete#sources#jedi#show_docstring=1
 
 " This to close preview when insert mode leaves
-"autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | silent! pclose | endif
+let g:gitgutter_preview_win_floating=0
 
 set statusline+=%#warningmsg#
 set statusline+=%*
@@ -272,34 +272,10 @@ endif
 " Required for operations modifying multiple buffers like rename.
 " set hidden
 
-let g:LanguageClient_serverCommands = {
-  \ 'javascript': ['javascript-typescript-stdio'],
-  \ 'typescript': ['javascript-typescript-stdio'],
-  \ 'javascript.jsx': ['javascript-typescript-stdio'],
-  \ 'python': ['pyls', '-v'],
-  \ 'reason': ['/usr/local/bin/reason-language-server.exe'],
-  \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-  \ }
-
-let g:LanguageClient_loggingLevel = 'INFO'
-let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
-let g:LanguageClient_serverStderr = '/tmp/LanguageServer.log'
-let g:LanguageClient_diagnosticsEnable = 0
-
 " run rust fmt on save
-let g:rustfmt_autosave = 0
+let g:rustfmt_autosave = 1
 
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> <leader>h :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+nnoremap <silent> gd :ALEGoToDefinition<CR>
+nnoremap <silent> <leader>h :ALEHover<CR>
 
 nmap =j :%!python -m json.tool<CR>
-
-hi def link tsxTag Function
-hi def link tsxComponentName Function
-hi def link tsxTagName Identifier
-hi def link tsxCloseString Identifier
-hi def link tsxCloseTag Identifier
-hi def link tsxCloseTagName Identifier
-hi def link tsxAttrib Type
-hi def link typescriptEndColons Noise
