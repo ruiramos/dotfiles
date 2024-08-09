@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/rui.ramos/.oh-my-zsh
+export ZSH=/Users/ruiramos/.oh-my-zsh
 
 export NVM_LAZY_LOAD=true
 export NODE_PATH="/usr/local/lib/node_modules"

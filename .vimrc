@@ -40,7 +40,6 @@ au BufRead,BufNewFile *.handlebars set filetype=html
 
 let g:python3_host_prog = '/Users/ruiramos/.nvim-venv/bin/python'
 
-" :((((
 noremap <Up> <NOP>
 noremap <Down> <NOP>
 noremap <Left> <NOP>
@@ -67,7 +66,7 @@ if executable('rg')
 endif
 
 " bind K to grep word under cursor
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap K :grep! "<C-R><C-W>"<CR>:cw<CR>
 
 " bind \ (backward slash) to grep shortcut
 nnoremap \ :Ack<SPACE>
@@ -75,10 +74,10 @@ nnoremap \ :Ack<SPACE>
 " ctrlp - set mru as default
 let g:ctrlp_cmd = 'CtrlPMRU'
 let g:ctrlp_mruf_relative = 1
-let g:ctrlp_prompt_mappings = {
-    \ 'AcceptSelection("h")': ['<c-i>', '<2-LeftMouse>'],
-    \ 'AcceptSelection("v")': ['<c-s>', '<RightMouse>'],
-    \ }
+" let g:ctrlp_prompt_mappings = {
+"     \ 'AcceptSelection("h")': ['<c-i>', '<2-LeftMouse>'],
+"     \ 'AcceptSelection("v")': ['<c-s>', '<RightMouse>'],
+"     \ }
 
 let g:ale_fixers = {
   \ 'javascript': ['prettier', 'eslint'], 
@@ -94,7 +93,7 @@ let g:ale_linters = {'rust': ['analyzer'], 'python': ['flake8', 'pylsp', 'bandit
 
 let g:ale_fix_on_save = 1
 let g:ale_python_auto_pipenv = 1
-let g:ale_completion_enabled = 0
+let g:ale_completion_enabled = 1
 highlight clear ALEWarningSign
 
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -170,8 +169,6 @@ Plug 'reasonml-editor/vim-reason-plus'
 " solidity
 Plug 'tomlion/vim-solidity'
 
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
 Plug 'godlygeek/tabular'
 
 " auto detect ident settings
@@ -197,8 +194,6 @@ let g:airline_powerline_fonts = 1
 " edit / source vimrc
 nnoremap gev :e $MYVIMRC<CR>
 nnoremap gsv :so $MYVIMRC<CR>
-
-let g:deoplete#enable_at_startup = 1
 
 set statusline+=%#warningmsg#
 set statusline+=%*
