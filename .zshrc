@@ -1,13 +1,16 @@
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/ruiramos/.oh-my-zsh
 
-export NVM_LAZY_LOAD=true
+export NVM_LAZY_LOAD=false
 export NODE_PATH="/usr/local/lib/node_modules"
 export EDITOR=vi
-export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+#export JAVA_HOME=$(/usr/libexec/java_home -v 17)
 
 # Alias for intel x86_64 brew
 alias axbrew='arch -x86_64 /usr/local/homebrew/bin/brew'
+alias docker=podman
+alias python=python3.13
+alias pip=pip3.13
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -60,11 +63,11 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(vi-mode git z macos tmux sudo docker docker-compose kubectl asdf zsh-nvm)
+plugins=(vi-mode git z macos tmux sudo docker docker-compose kubectl asdf zsh-nvm pnpm)
 
 # User configuration
 #export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin":$PATH
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.wasme/bin:$HOME/.cargo/bin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.wasme/bin:$HOME/.cargo/bin":$PATH
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -136,9 +139,9 @@ export PATH="/usr/local/opt/libpq/bin:$PATH"
 #export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"
 #eval "$(rbenv init -)"
 
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+#export PYENV_ROOT="$HOME/.pyenv"
+#command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+#eval "$(pyenv init -)"
 
 # Created by `pipx` on 2023-02-28 22:28:34
 export PATH="$PATH:/Users/ruiramos/.local/bin"
@@ -151,3 +154,46 @@ if [ -f '/Users/ruiramos/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Us
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/ruiramos/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ruiramos/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
+export PUPPETEER_EXECUTABLE_PATH=/opt/homebrew/bin/chromium
+
+# pnpm
+export PNPM_HOME="/Users/ruiramos/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+export PODMAN_COMPOSE_WARNING_LOGS=false
+source ~/completion-for-pnpm.zsh
+source ~/.zshrc-goodfit
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# place this after nvm initialization!
+autoload -U add-zsh-hook
+
+load-nvmrc() {
+  local nvmrc_path
+  nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version
+    nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+      nvm use
+    fi
+  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+

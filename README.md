@@ -21,3 +21,7 @@ i) Install [tpm](https://github.com/tmux-plugins/tpm)
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
 
+## random - to sort
+
+git clone https://github.com/lukechilds/zsh-nvm ~/.oh-my-zsh/custom/plugins/zsh-nvm
+

@@ -234,6 +234,7 @@ endif
 let g:rustfmt_autosave = 1
 
 nnoremap <silent> gd :ALEGoToDefinition<CR>
+nnoremap <silent> gr :ALEFindReferences<CR>
 nnoremap <silent> <leader>h :ALEHover<CR>
 
 nmap =j :%!python -m json.tool<CR>
